@@ -9,6 +9,7 @@ import { GalleryList } from '../GalleryList/GalleryList';
 export const ImageGallery = ({ value, onZoom, textSearch }) => {
   const [image, setImage] = useState([]);
   const [page, setPage] = useState(1);
+  // const [error, setError] = useState('');
   const [status, setStatus] = useState('idle');
 
   useEffect(() => {
@@ -51,7 +52,7 @@ export const ImageGallery = ({ value, onZoom, textSearch }) => {
           }, 500);
         }
       });
-  }, [page + 1]);
+  }, [page]);
 
   if (status === 'pending') {
     return <Loader />;
