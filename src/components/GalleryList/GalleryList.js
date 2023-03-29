@@ -10,7 +10,7 @@ export const GalleryList = ({ image, onZoom }) => {
     </GalleryListStyle>
   );
 };
-// GalleryList.propTypes = {
-//   image: PropTypes.array.isRequired,
-//   onZoom: PropTypes.func.isRequired,
-// };
+GalleryList.propTypes = {
+  image: PropTypes.array.isRequired,
+  onZoom: PropTypes.func.isRequired,
+};
