@@ -10,7 +10,7 @@ import { GlobalStyle } from './GlobalStyle/GlobalStyle';
 
 export const App = () => {
   const [textSearch, setSearch] = useState('');
-  const [open, setOpen] = useState(true);
+  // const [open, setOpen] = useState(true);
   const [selectedImage, setImage] = useState(null);
 
   const handleSubmit = textSearch => {
@@ -21,11 +21,11 @@ export const App = () => {
     setImage(imageUrl);
   };
 
-  const KeyDown = e => {
-    if (e.code === 'Escape') {
-      setImage(null);
-    }
-  };
+  // const KeyDown = e => {
+  //   if (e.code === 'Escape') {
+  //     setImage(null);
+  //   }
+  // };
 
   const BackdropClick = e => {
     if (e.target === e.currentTarget) {
