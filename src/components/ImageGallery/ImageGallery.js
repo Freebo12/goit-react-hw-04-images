@@ -1,79 +1,79 @@
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
 import { getImage } from 'services/getImage';
+import PropTypes from 'prop-types';
 
 import { Loader } from 'components/Loader/Loader';
 import { BtnLoadMore } from 'components/Button/Button';
 import { GalleryList } from '../GalleryList/GalleryList';
 
-export class ImageGallery extends Component {
-  state = {
-    image: [],
-    page: 1,
-    error: '',
-    status: 'idle',
-    searcImage: '',
-    imagesOnPage: '',
+export const ImageGallery = ({ value, onZoom, textSearch }) => {
+  const [image, setImage] = useState([]);
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState('');
+  const [status, setStatus] = useState('idle');
+  const [searchImage, setSearchImage] = useState('');
+  const [imageOnPage, setImageOnPage] = useState('');
+
+  useEffect(() => {
+    setStatus('idle');
+    setPage(1);
+    setImage(null);
+    if (textSearch !== '') {
+      getImage(textSearch, 1).then(response => {
+        response
+          .json()
+          .then(image => {
+            setStatus('pending');
+            setImage([...image.hits]);
+            setPage(1);
+
+            setTimeout(() => {
+              setStatus('resolved');
+            }, 500);
+          })
+          .catch(
+            (error => console.log(error), setStatus({ status: 'pending' }))
+          );
+      });
+    }
+  }, [textSearch]);
+
+  const loadMore = () => {
+    setPage(prevPage => prevPage + 1);
   };
 
-  componentDidUpdate(prevProps, prevState) {
-
-    const prevName = prevProps.textSearch.trim();
-    const nextName = this.props.textSearch.trim();
-
-    if (prevName !== nextName) {
-      this.setState({ status: 'pending' });
-      this.setState({ page: 1 });
-      this.setState({ image: null });
-
-      getImage(nextName, 1)
-        .then(response => response.json())
-        .then(image => {
-          if (image.hits.length !== 0) {
-            return this.setState({
-              image: [...image.hits],
-              status: 'resolved',
-              page: 1,
-            });
-          }
-        })
-        .catch(
-          (error => console.log(error), this.setState({ status: 'pending' }))
-        );
-    }
-  }
-
-  handleLoadMore = (prevState, prevProps) => {
-    getImage(this.props.value, this.state.page + 1)
-      .then(resp => resp.json())
-      .then(image => {
-        console.log(image.hits);
-        if (image.length !== 0) {
-          this.setState(prev => ({
-            page: this.state.page + 1,
-            image: [...this.state.image, ...image.hits],
-          }));
+  useEffect(() => {
+    getImage(textSearch, page + 1)
+      .then(response => response.json())
+      .then(images => {
+        if (page > 1) {
+          setStatus('pending');
+          setImage(prevImages => [...prevImages, ...images.hits]);
+          setTimeout(() => {
+            setStatus('resolved');
+          }, 500);
         }
       });
-  };
+  }, [page + 1]);
 
-  render() {
-    const { status, image,} = this.state;
-    const { onZoom } = this.props;
-
-    if (status === 'pending') {
-      return <Loader />;
-    }
-
-    if (status === 'resolved') {
-      return (
-        <>
-          <GalleryList image={image} onZoom={onZoom} />
-          <BtnLoadMore onLoadMore={this.handleLoadMore} />
-        </>
-      );
-    }
-
-    if (status === 'rejected') {
-    }
+  if (status === 'pending') {
+    return <Loader />;
   }
-}
+
+  if (status === 'resolved') {
+    return (
+      <>
+        <GalleryList image={image} onZoom={onZoom} />
+        <BtnLoadMore loadMore={loadMore} />
+      </>
+    );
+  }
+
+  if (status === 'rejected') {
+  }
+};
+
+ImageGallery.propTypes = {
+  onZoom: PropTypes.func.isRequired,
+  textSearch: PropTypes.string.isRequired,
+};

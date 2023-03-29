@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import { SearchBar } from './SearchBar/SearchBar';
@@ -8,67 +8,48 @@ import { SectionApp } from './App.styled';
 import { Modal } from './Modal/Modal';
 import { GlobalStyle } from './GlobalStyle/GlobalStyle';
 
-export class App extends Component {
-  state = {
-    textSearch: '',
-    open: true,
-    selectedImage: null,
+export const App = () => {
+  const [textSearch, setSearch] = useState('');
+  const [open, setOpen] = useState(true);
+  const [selectedImage, setImage] = useState(null);
+
+  const handleSubmit = textSearch => {
+    setSearch(textSearch);
   };
 
-  componentDidMount() {
-    window.addEventListener('keydown', this.KeyDown);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.KeyDown);
-  }
-
-  handleSubmit = textSearch => {
-    this.setState({ textSearch });
+  const selectImage = imageUrl => {
+    setImage(imageUrl);
   };
 
-  selectImage = imageUrl => {
-    this.setState({ selectedImage: imageUrl });
-  };
-
-  KeyDown = e => {
+  const KeyDown = e => {
     if (e.code === 'Escape') {
-      this.setState({ selectedImage: null });
+      setImage(null);
     }
   };
 
-  BackdropClick = e => {
+  const BackdropClick = e => {
     if (e.target === e.currentTarget) {
-      this.setState({ selectedImage: null });
+      setImage(null);
     }
   };
 
-  render() {
-    const { textSearch } = this.state;
-    return (
-      <SectionApp>
-        <GlobalStyle />
-        <Toaster
-          toastOptions={{
-            duration: 1500,
-            position: 'top-right',
-            style: {
-              borderRadius: '10px',
-              background: '#333',
-              color: '#fff',
-            },
-          }}
-        />
-        <SearchBar onSearch={this.handleSubmit} />
-        <ImageGallery
-          value={this.state.textSearch}
-          onZoom={this.selectImage}
-          textSearch={textSearch}
-        />
-        {this.state.selectedImage && (
-          <Modal img={this.state.selectedImage} onClose={this.BackdropClick} />
-        )}
-      </SectionApp>
-    );
-  }
-}
+  return (
+    <SectionApp>
+      <GlobalStyle />
+      <Toaster
+        toastOptions={{
+          duration: 1500,
+          position: 'top-right',
+          style: {
+            borderRadius: '10px',
+            background: '#333',
+            color: '#fff',
+          },
+        }}
+      />
+      <SearchBar onSearch={handleSubmit} />
+      <ImageGallery textSearch={textSearch} onZoom={selectImage} />
+      {selectedImage && <Modal img={selectedImage} onClose={BackdropClick} />}
+    </SectionApp>
+  );
+};
