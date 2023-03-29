@@ -9,10 +9,7 @@ import { GalleryList } from '../GalleryList/GalleryList';
 export const ImageGallery = ({ value, onZoom, textSearch }) => {
   const [image, setImage] = useState([]);
   const [page, setPage] = useState(1);
-  const [error, setError] = useState('');
   const [status, setStatus] = useState('idle');
-  const [searchImage, setSearchImage] = useState('');
-  const [imageOnPage, setImageOnPage] = useState('');
 
   useEffect(() => {
     setStatus('idle');
