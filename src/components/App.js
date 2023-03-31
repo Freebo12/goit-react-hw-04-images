@@ -31,13 +31,14 @@ export const App = () => {
       try {
         setStatus('pending');
         setError('null');
+        console.log(error);
         const imgFetch = await getImage(textSearch, page);
         const imgFind = await imgFetch.json();
 
         setImage(prev => [...prev, ...imgFind.hits]);
         setStatus('resolved');
       } catch (error) {
-        setError(error => error);
+        setError('opps');
       } finally {
         setStatus('resolved');
       }
