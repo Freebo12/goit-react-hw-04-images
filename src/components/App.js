@@ -1,31 +1,73 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
-import { SearchBar } from './SearchBar/SearchBar';
-import { ImageGallery } from './ImageGallery/ImageGallery';
+import { useEffect, useState } from 'react';
+import { getImage } from 'services/getImage';
 
+import { Loader } from '../components/Loader/Loader';
+import { BtnLoadMore } from '../components/Button/Button';
+import { GalleryList } from '../components/GalleryList/GalleryList';
+import { SearchBar } from './SearchBar/SearchBar';
 import { SectionApp } from './App.styled';
 import { Modal } from './Modal/Modal';
+
 import { GlobalStyle } from './GlobalStyle/GlobalStyle';
 
 export const App = () => {
   const [textSearch, setSearch] = useState('');
   // const [open, setOpen] = useState(true);
-  const [selectedImage, setImage] = useState(null);
+  const [selectedImage, setSelectImage] = useState(null);
+
+  const [image, setImage] = useState([]);
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState(null);
+  const [status, setStatus] = useState('idle');
+
+  useEffect(() => {
+    if (!textSearch) {
+      return;
+    }
+    async function GetImage() {
+      try {
+        setStatus('pending');
+        setError('null');
+        const imgFetch = await getImage(textSearch, page);
+        const imgFind = await imgFetch.json();
+
+        setImage(prev => [...prev, ...imgFind.hits]);
+
+        // if (page > 1) {
+        //   setImage(prev => [...prev, ...imgFind.hits]);
+        // }
+        setStatus('resolved');
+      } catch (error) {
+        setError('opps!!!!');
+      } finally {
+        setStatus('resolved');
+      }
+    }
+    GetImage();
+  }, [textSearch, page]);
 
   const handleSubmit = textSearch => {
     setSearch(textSearch);
+    setImage([]);
+    setPage(1);
+  };
+
+  const loadMore = () => {
+    setPage(prevPage => prevPage + 1);
   };
 
   const selectImage = imageUrl => {
-    setImage(imageUrl);
+    setSelectImage(imageUrl);
   };
 
-  // const KeyDown = e => {
-  //   if (e.code === 'Escape') {
-  //     setImage(null);
-  //   }
-  // };
+  const KeyDown = e => {
+    if (e.code === 'Escape') {
+      setImage(null);
+    }
+  };
 
   const BackdropClick = e => {
     if (e.target === e.currentTarget) {
@@ -34,7 +76,7 @@ export const App = () => {
   };
 
   return (
-    <SectionApp>
+    <>
       <GlobalStyle />
       <Toaster
         toastOptions={{
@@ -48,8 +90,52 @@ export const App = () => {
         }}
       />
       <SearchBar onSearch={handleSubmit} />
-      <ImageGallery textSearch={textSearch} onZoom={selectImage} />
+      {status === 'resolved' && (
+        <>
+          <GalleryList image={image} onZoom={selectImage} />
+          <BtnLoadMore loadMore={loadMore} />
+        </>
+      )}
       {selectedImage && <Modal img={selectedImage} onClose={BackdropClick} />}
-    </SectionApp>
+    </>
   );
 };
+
+//   if (status === 'pending') {
+//     return <Loader />;
+//   }
+
+//   if (status === 'resolved') {
+//     return (
+// <>
+//   <GalleryList image={image} onZoom={onZoom} />
+//   <BtnLoadMore loadMore={loadMore} />
+// </>
+//     );
+//   }
+
+//   if (status === 'rejected') {
+//   }
+// };
+
+// const changeQueryName = ({ queryName }) => {
+//   setQueryName(queryName);
+//   setSearchImages([]);
+//   setPage(1);
+// };
+
+// if (status === 'pending') {
+//   return <Loader />;
+// }
+
+// if (status === 'resolved') {
+//   return (
+//     <>
+//       <GalleryList image={image} onZoom={selectImage} />
+//       <BtnLoadMore loadMore={loadMore} />
+//     </>
+//   );
+// }
+
+// if (status === 'rejected') {
+// }
