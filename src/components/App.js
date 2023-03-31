@@ -35,10 +35,6 @@ export const App = () => {
         const imgFind = await imgFetch.json();
 
         setImage(prev => [...prev, ...imgFind.hits]);
-
-        // if (page > 1) {
-        //   setImage(prev => [...prev, ...imgFind.hits]);
-        // }
         setStatus('resolved');
       } catch (error) {
         setError('opps!!!!');
@@ -76,7 +72,7 @@ export const App = () => {
   };
 
   return (
-    <>
+    <SectionApp>
       <GlobalStyle />
       <Toaster
         toastOptions={{
@@ -90,52 +86,15 @@ export const App = () => {
         }}
       />
       <SearchBar onSearch={handleSubmit} />
+      {status === 'pending' && <Loader />}
       {status === 'resolved' && (
         <>
+          <GlobalStyle />
           <GalleryList image={image} onZoom={selectImage} />
           <BtnLoadMore loadMore={loadMore} />
         </>
       )}
       {selectedImage && <Modal img={selectedImage} onClose={BackdropClick} />}
-    </>
+    </SectionApp>
   );
 };
-
-//   if (status === 'pending') {
-//     return <Loader />;
-//   }
-
-//   if (status === 'resolved') {
-//     return (
-// <>
-//   <GalleryList image={image} onZoom={onZoom} />
-//   <BtnLoadMore loadMore={loadMore} />
-// </>
-//     );
-//   }
-
-//   if (status === 'rejected') {
-//   }
-// };
-
-// const changeQueryName = ({ queryName }) => {
-//   setQueryName(queryName);
-//   setSearchImages([]);
-//   setPage(1);
-// };
-
-// if (status === 'pending') {
-//   return <Loader />;
-// }
-
-// if (status === 'resolved') {
-//   return (
-//     <>
-//       <GalleryList image={image} onZoom={selectImage} />
-//       <BtnLoadMore loadMore={loadMore} />
-//     </>
-//   );
-// }
-
-// if (status === 'rejected') {
-// }
