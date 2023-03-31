@@ -19,7 +19,6 @@ export const App = () => {
   const [status, setStatus] = useState('idle');
 
   useEffect(() => {
-    console.log(error);
     if (!textSearch) {
       return;
     }
@@ -35,7 +34,6 @@ export const App = () => {
         setStatus('resolved');
       } catch (error) {
         setError('opps');
-        console.log(error);
       } finally {
         setStatus('resolved');
       }
@@ -47,6 +45,7 @@ export const App = () => {
     setSearch(textSearch);
     setImage([]);
     setPage(1);
+    console.log(error);
   };
 
   const loadMore = () => {
