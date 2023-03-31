@@ -1,23 +1,45 @@
 import PropTypes from 'prop-types';
-import { ImgItem, ListImg } from './ImageGalleryItem.styled';
+import { ListImg } from './ImageGalleryItem.styled';
+import { useEffect, useState } from 'react';
+import { Modal } from 'components/Modal/Modal';
 
-export const ImageGalleryItem = ({ image, onZoom }) => {
-  return image.map(img => {
-    return (
-      <ImgItem key={img.id}>
-        <ListImg
-          key={img.id}
-          src={img.webformatURL}
-          alt={img.webformatURL}
-          onClick={() => {
-            onZoom(img.largeImageURL);
-          }}
-        />
-      </ImgItem>
-    );
-  });
+export const ImageGalleryItem = ({ imgSmall, imgLarge, tags }) => {
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const KeyDown = e => {
+      if (e.code === 'Escape') {
+        setShowModal(false);
+      }
+    };
+    document.addEventListener('keydown', KeyDown);
+    return () => {
+      document.removeEventListener('keydown', KeyDown);
+    };
+  }, []);
+
+  const BackdropClick = e => {
+    if (e.target === e.currentTarget) {
+      setShowModal(false);
+    }
+  };
+
+  return (
+    <>
+      <ListImg
+        src={imgSmall}
+        alt={tags}
+        onClick={() => {
+          setShowModal(true);
+        }}
+      />
+      {showModal && <Modal imgLarge={imgLarge} onClose={BackdropClick} />}
+    </>
+  );
 };
 
 ImageGalleryItem.propTypes = {
-  image: PropTypes.array.isRequired,
+  imgSmall: PropTypes.string.isRequired,
+  imgLarge: PropTypes.string.isRequired,
+  tags: PropTypes.string.isRequired,
 };
