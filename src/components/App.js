@@ -23,6 +23,8 @@ export const App = () => {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState('idle');
 
+  console.log(error);
+
   useEffect(() => {
     if (!textSearch) {
       return;
@@ -31,7 +33,7 @@ export const App = () => {
       try {
         setStatus('pending');
         setError('null');
-        console.log(error);
+
         const imgFetch = await getImage(textSearch, page);
         const imgFind = await imgFetch.json();
 
