@@ -37,7 +37,7 @@ export const App = () => {
         setImage(prev => [...prev, ...imgFind.hits]);
         setStatus('resolved');
       } catch (error) {
-        setError('opps!!!!');
+        setError(error => error);
       } finally {
         setStatus('resolved');
       }
@@ -59,11 +59,11 @@ export const App = () => {
     setSelectImage(imageUrl);
   };
 
-  const KeyDown = e => {
-    if (e.code === 'Escape') {
-      setImage(null);
-    }
-  };
+  // const KeyDown = e => {
+  //   if (e.code === 'Escape') {
+  //     setImage(null);
+  //   }
+  // };
 
   const BackdropClick = e => {
     if (e.target === e.currentTarget) {
