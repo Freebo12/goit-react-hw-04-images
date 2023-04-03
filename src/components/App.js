@@ -72,7 +72,7 @@ export const App = () => {
         <>
           <GlobalStyle />
           <GalleryList image={image} />
-          <BtnLoadMore loadMore={loadMore} />
+          {image.length !== 0 && <BtnLoadMore loadMore={loadMore} />}
         </>
       )}
     </SectionApp>
